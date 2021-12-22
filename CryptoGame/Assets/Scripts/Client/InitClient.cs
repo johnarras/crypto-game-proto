@@ -15,9 +15,12 @@ public class InitClient : BaseBehaviour
 
     private void OnAwake()
     {
+        gs.SetInitObject(gameObject);
         SetupService setupService = new SetupService();
 
         setupService.SetupGame(gs, ps,ToWallet,GameId,StartBlockId);
 
+        ScreenService screenService = gs.fact.Get<ScreenService>();
+        screenService.Open(gs, ScreenList.HUDScreen);
     }
 }

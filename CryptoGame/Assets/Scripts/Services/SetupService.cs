@@ -38,6 +38,7 @@ public class SetupService
         SetupRepo(gs, ps);
         SetupObjectFactory(gs, ps);
         RunServiceSetups(gs, ps);
+        SetupUnityServices(gs, ps);
         SetupGameData(gs, ps);
     }
 
@@ -70,4 +71,19 @@ public class SetupService
 
         gameService.SetupGameData(gs);
     }
+
+    protected void SetupUnityServices(GameState gs, PlayerState ps)
+    {
+        AddUnityService<ScreenService>(gs, ps);
+    }
+
+    protected void AddUnityService<T>(GameState gs, PlayerState ps) where T :ServiceBehaviour
+    {
+        T service = GameObjectUtils.GetComponent<T>(gs.GetInitObject());
+        if (service != null)
+        {
+            gs.fact.Set(service);
+        }
+    }
+
 }

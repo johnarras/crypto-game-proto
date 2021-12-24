@@ -5,10 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-public class BlockIdList
+[Serializable]
+public class FullBlock
 {
-
-    public const long MinBlock = 44000;
-
-    public const long V1 = MinBlock;
+    public InnerBlock block;
 }

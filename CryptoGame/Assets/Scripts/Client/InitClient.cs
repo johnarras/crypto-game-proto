@@ -22,5 +22,10 @@ public class InitClient : BaseBehaviour
 
         ScreenService screenService = gs.fact.Get<ScreenService>();
         screenService.Open(gs, ScreenList.HUDScreen);
+
+
+        IProcessBlockService blockService = gs.fact.Get<IProcessBlockService>();
+
+        StartCoroutine(blockService.Process(gs, ps));
     }
 }

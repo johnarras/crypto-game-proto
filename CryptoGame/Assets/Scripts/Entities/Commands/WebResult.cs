@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
-public class BlockIdList
+public class WebResult
 {
-
-    public const long MinBlock = 44000;
-
-    public const long V1 = MinBlock;
+    public bool Success;
+    public string Text;
+    public object Data;
 }

@@ -30,7 +30,7 @@ public class ProcessBlockService : BaseService, IProcessBlockService
 
         foreach (IBlockProcessor processor in blockProcessors)
         {
-
+            yield return processor.Process(gs, ps);
         }
 
 

@@ -19,4 +19,9 @@ public class BlockData : IStringId
     }
     public long BlockId { get; set; }
     public List<Command> Commands { get; set; }
+
+    public BlockData()
+    {
+        Commands = new List<Command>();
+    }
 }

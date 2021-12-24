@@ -4,11 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
-public class BlockIdList
+[Serializable]
+public class FullTransaction
 {
-
-    public const long MinBlock = 44000;
-
-    public const long V1 = MinBlock;
+    public InnerTransaction transaction;
 }

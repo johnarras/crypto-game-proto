@@ -5,10 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-public class BlockIdList
+[Serializable]
+public class ScriptPubKey
 {
-
-    public const long MinBlock = 44000;
-
-    public const long V1 = MinBlock;
+    public string asm;
+    public string hex;
 }

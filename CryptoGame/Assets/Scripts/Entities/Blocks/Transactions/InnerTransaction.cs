@@ -5,10 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-public class BlockIdList
+[Serializable]
+public class InnerTransaction
 {
-
-    public const long MinBlock = 44000;
-
-    public const long V1 = MinBlock;
+    public List<TransactionIO> inputs;
+    public List<TransactionIO> outputs;
 }

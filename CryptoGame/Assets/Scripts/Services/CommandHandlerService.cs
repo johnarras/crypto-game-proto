@@ -34,7 +34,7 @@ public class CommandHandlerService : IService
 
         foreach (Command comm in commands)
         {
-            ICommandHandler handler = GetHandler(gs, comm.CommandId);
+            ICommandHandler handler = GetHandler(gs, comm.FullCommand);
             if (handler != null)
             {
                 yield return handler.Process(gs, ps, comm);

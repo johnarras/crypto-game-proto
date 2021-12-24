@@ -11,8 +11,9 @@ using UnityEngine.Networking;
 public class DownloadNewBlock : IBlockProcessor
 {
     protected const string blockPrefixURL = "https://dogechain.info/api/v1/block/";
-    protected const string transPrefixURL = "https://dogechain.info/api/v1/transaction/";
-
+    //protected const string transPrefixURL = "https://dogechain.info/api/v1/transaction/";
+    //protected const string transPrefixURL = "https://dogechain.info/rawblock/";
+    protected const string transPrefixURL = "https://chain.so/api/v2/get_tx/DOGE/";
     public virtual IEnumerator Process(GameState gs, PlayerState ps)
     {
         long blockId = gs.processing.BlockId;
@@ -57,7 +58,7 @@ public class DownloadNewBlock : IBlockProcessor
             for (int i = 0; i < block.block.txs.Count; i++)
             {
                 string txid = block.block.txs[i];
-                txid = "e8294ebac3c8c9b6aed4b2fab08393e9035eb451f356e3cb88a119d55932ceda";
+                txid = "2bc3a2fadc9605f51957e61b6e3238e987031103e1ec6ddec9590751d6283026";
                 WebResult transResult = new WebResult();
                 yield return SendWebRequest.GetRequest(transPrefixURL + txid,
               transResult);
@@ -77,25 +78,55 @@ public class DownloadNewBlock : IBlockProcessor
                     throw e;
                 }
 
-                double outputSum = 0;
-                foreach (TransactionIO tio in fullTrans.transaction.outputs)
+                if (fullTrans.data.inputs.Count < 1)
                 {
-                    if (tio.address == gs.processing.ToWallet)
+                    continue;
+                }
+
+                string fromWallet = fullTrans.data.inputs[0].address;
+
+                if (fullTrans.data.outputs.Count < 1)
+                {
+                    continue;
+                }
+
+                string toWallet = fullTrans.data.outputs[0].address;
+                double outputSum = fullTrans.data.outputs[0].value;
+
+                string raw_op_return = "";
+                foreach (TransactionIO tio in fullTrans.data.outputs)
+                {
+                    if (!string.IsNullOrEmpty(tio.script) &&
+                        tio.script.IndexOf("OP_RETURN") == 0)
                     {
-                        outputSum += tio.value;
+                        raw_op_return = tio.script;
+                        break;
                     }
                 }
 
-                if (outputSum > 0)
+                if (string.IsNullOrEmpty(raw_op_return))
                 {
-                    Command comm = new Command()
-                    {
-                        FromWallet = fullTrans.transaction.inputs[0].address,
-                        ToWallet = fullTrans.transaction.outputs[0].address,
-                        Quantity = outputSum,
-
-                    };
+                    continue;
                 }
+
+                string[] words = raw_op_return.Split(' ');
+                if (words.Length != 2 || words[0] != "OP_RETURN")
+                {
+                    continue;
+                }
+
+                string decodedCommand = StrUtils.HexToString(words[1]);
+                
+                Command comm = new Command()
+                {
+                    FromWallet = fromWallet,
+                    ToWallet = toWallet,
+                    Quantity = outputSum,
+                    FullCommand =decodedCommand,
+                    
+                };
+
+                currentData.Commands.Add(comm);     
 
                 Debug.Log("FullTrans is: " + fullTrans);
                 break;

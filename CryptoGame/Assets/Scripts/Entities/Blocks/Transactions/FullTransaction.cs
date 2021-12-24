@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 [Serializable]
 public class FullTransaction
 {
-    public InnerTransaction transaction;
+    public InnerTransaction data;
 }

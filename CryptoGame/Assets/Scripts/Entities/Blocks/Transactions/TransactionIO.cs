@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 [Serializable]
 public class TransactionIO
 {
-    public long pos;
+    public long output_no;
     public double value;
     public string address;
-    public ScriptPubKey scriptPubKey;
-    public ScriptPubKey scriptSig;
+    public string script;
 }

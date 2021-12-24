@@ -9,6 +9,5 @@ public class Command
     public string ToWallet { get; set; }
     public string FromWallet { get; set; }
     public double Quantity { get; set; }
-    public string CommandId { get; set; }
-    public string Data { get; set; }
+    public string FullCommand { get; set; }
 }

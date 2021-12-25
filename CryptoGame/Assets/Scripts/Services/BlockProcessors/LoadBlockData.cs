@@ -6,13 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
+using Newtonsoft.Json;
 
 // opreturn.net
-public class DownloadNewBlock : IBlockProcessor
+public class LoadBlockData : IBlockProcessor
 {
-    protected const string blockPrefixURL = "https://dogechain.info/api/v1/block/";
-    //protected const string transPrefixURL = "https://dogechain.info/api/v1/transaction/";
-    //protected const string transPrefixURL = "https://dogechain.info/rawblock/";
+
+    protected const string OP_RETURN = "OP_RETURN";
+    protected const string blockPrefixURL = "https://chain.so/api/v2/get_block/DOGE/";
     protected const string transPrefixURL = "https://chain.so/api/v2/get_tx/DOGE/";
     public virtual IEnumerator Process(GameState gs, PlayerState ps)
     {
@@ -28,54 +29,60 @@ public class DownloadNewBlock : IBlockProcessor
 
             if (!blockResult.Success)
             {
-                throw new Exception("Failed to download block: " + blockId);
+                gs.processing.BlockError = "Failed to download block " + blockId;
+                yield break;
             }
             FullBlock block = null;
             try
             {
-                block = JsonUtility.FromJson<FullBlock>(blockResult.Text);
+                block = JsonConvert.DeserializeObject<FullBlock>(blockResult.Text);
             }
             catch (Exception e)
             {
-                throw e;
+                gs.processing.BlockError = e.Message;
+                yield break;
             }
 
-            if (block == null || block.block == null)
+            if (block == null || block.data == null)
             {
-                throw new Exception("Failed to download block");
+                gs.processing.BlockError = "Missing block at " + blockId;
+                yield break;
             }
 
-            if (block.block.height != blockId)
+            if (block.data.block_no != blockId)
             {
-                throw new Exception("Block Height read did not match desired BlockId");
+                gs.processing.BlockError = "Block Height read did not match desired BlockId";
+                yield break;
             }
 
             currentData = new BlockData()
             {
-                BlockId = block.block.height,
+                BlockId = block.data.block_no,
             };
 
-            for (int i = 0; i < block.block.txs.Count; i++)
+            for (int i = 0; i < block.data.txs.Count; i++)
             {
-                string txid = block.block.txs[i];
-                txid = "2bc3a2fadc9605f51957e61b6e3238e987031103e1ec6ddec9590751d6283026";
+                string txid = block.data.txs[i];
                 WebResult transResult = new WebResult();
                 yield return SendWebRequest.GetRequest(transPrefixURL + txid,
               transResult);
 
                 if (!transResult.Success)
                 {
-                    throw new Exception("Failed to download transaction: " + txid);
+                    gs.processing.BlockError =
+                    "Failed to download transaction: " + txid;
+                    yield break;
                 }
 
                 FullTransaction fullTrans = null;
                 try
                 {
-                    fullTrans = JsonUtility.FromJson<FullTransaction>(transResult.Text);
+                    fullTrans = JsonConvert.DeserializeObject<FullTransaction>(transResult.Text);
                 }
                 catch (Exception e)
                 {
-                    throw e;
+                    gs.processing.BlockError = e.Message;
+                    yield break;
                 }
 
                 if (fullTrans.data.inputs.Count < 1)
@@ -97,7 +104,7 @@ public class DownloadNewBlock : IBlockProcessor
                 foreach (TransactionIO tio in fullTrans.data.outputs)
                 {
                     if (!string.IsNullOrEmpty(tio.script) &&
-                        tio.script.IndexOf("OP_RETURN") == 0)
+                        tio.script.IndexOf(OP_RETURN) == 0)
                     {
                         raw_op_return = tio.script;
                         break;
@@ -110,7 +117,7 @@ public class DownloadNewBlock : IBlockProcessor
                 }
 
                 string[] words = raw_op_return.Split(' ');
-                if (words.Length != 2 || words[0] != "OP_RETURN")
+                if (words.Length != 2 || words[0] != OP_RETURN)
                 {
                     continue;
                 }
@@ -128,9 +135,9 @@ public class DownloadNewBlock : IBlockProcessor
 
                 currentData.Commands.Add(comm);     
 
-                Debug.Log("FullTrans is: " + fullTrans);
-                break;
             }
+
+            gs.repo.Save(currentData);
         }
 
 

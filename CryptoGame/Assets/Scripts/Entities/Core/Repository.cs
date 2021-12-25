@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class Repository
 {
@@ -34,7 +35,7 @@ public class Repository
                 return default(T);
             }
             string txt = File.ReadAllText(path, System.Text.Encoding.UTF8);
-            return JsonUtility.FromJson<T>(txt);
+            return JsonConvert.DeserializeObject<T>(txt);
         }
         catch (Exception e)
         {
@@ -46,6 +47,7 @@ public class Repository
     public void Save<T> (T t, string id = "") where T : IStringId
     {
         string path = GetPath(typeof(T).Name + (!string.IsNullOrEmpty(id)?id:t.Id));
-        File.WriteAllText(path, JsonUtility.ToJson(t));
+        string txt = JsonConvert.SerializeObject(t);
+        File.WriteAllText(path, txt);
     }
 }

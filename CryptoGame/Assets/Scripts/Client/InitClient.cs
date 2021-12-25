@@ -5,7 +5,6 @@ using UnityEngine;
 public class InitClient : BaseBehaviour
 {
     public string ToWallet;
-    public int GameId;
     public int StartBlockId;
 
     private void Awake()
@@ -18,7 +17,7 @@ public class InitClient : BaseBehaviour
         gs.SetInitObject(gameObject);
         SetupService setupService = new SetupService();
 
-        setupService.SetupGame(gs, ps,ToWallet,GameId,StartBlockId);
+        setupService.SetupGame(gs, ps,ToWallet,StartBlockId);
 
         ScreenService screenService = gs.fact.Get<ScreenService>();
         screenService.Open(gs, ScreenList.HUDScreen);

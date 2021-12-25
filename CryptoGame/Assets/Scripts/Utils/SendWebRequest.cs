@@ -9,19 +9,28 @@ using UnityEngine.Networking;
 
 public class SendWebRequest
 {
+    public const int MAX_RETRY_TIMES = 4;
+
     public static IEnumerator GetRequest(string uri, WebResult result)
     {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+        for (int times = 0; times < MAX_RETRY_TIMES; times++)
         {
-            // Request and wait for the desired page.
-            yield return webRequest.SendWebRequest();
-
-            if (webRequest.result == UnityWebRequest.Result.Success)
+            using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
             {
-                result.Text = webRequest.downloadHandler.text;
-                result.Data = webRequest.downloadHandler.data;
-                result.Success = true;
+                // Request and wait for the desired page.
+                yield return webRequest.SendWebRequest();
+
+                if (webRequest.result == UnityWebRequest.Result.Success)
+                {
+                    result.Text = webRequest.downloadHandler.text;
+                    result.Data = webRequest.downloadHandler.data;
+                    result.Success = true;
+                    yield break;
+                }
             }
+
+            Debug.Log("Failed Download Times: " + times);
+            yield return new WaitForSeconds((times + 1) * 10.0f);
         }
     }
 }

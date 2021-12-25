@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 [Serializable]
 public class FullBlock
 {
-    public InnerBlock block;
+    public InnerBlock data { get; set; }
 }

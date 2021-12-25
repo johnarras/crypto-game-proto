@@ -14,13 +14,14 @@ public class SetupService
         gs.fact.Set<IProcessBlockService>(new ProcessBlockService());
         gs.fact.Set<CommandHandlerService>(new CommandHandlerService());
         gs.fact.Set<IGameDataService>(new GameDataService());
+        gs.fact.Set<IUpdateEconService>(new UpdateEconService());
 
 
 
 
 
     }
-    public void SetupGame(GameState gs, PlayerState ps, string toWallet, long gameId, long blockId)
+    public void SetupGame(GameState gs, PlayerState ps, string toWallet, long blockId)
     {
         if (blockId < BlockIdList.MinBlock)
         {
@@ -30,7 +31,6 @@ public class SetupService
         gs.processing = new ProcessingData()
         {
             ToWallet = toWallet,
-            GameId = gameId,
             BlockId = blockId,
         };
 

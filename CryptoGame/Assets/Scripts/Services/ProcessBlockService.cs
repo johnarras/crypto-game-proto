@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 public class ProcessBlockService : BaseService, IProcessBlockService
 {
@@ -21,16 +22,27 @@ public class ProcessBlockService : BaseService, IProcessBlockService
 
     protected List<IBlockProcessor> blockProcessors = new List<IBlockProcessor>()
     {
-        new DownloadNewBlock(),
+        new LoadBlockData(),
+        new UpdateEcon(),
+        new UpdateCurrentBlock(),
     };
 
 
     public virtual IEnumerator Process(GameState gs, PlayerState ps)
     {
 
-        foreach (IBlockProcessor processor in blockProcessors)
+        while (string.IsNullOrEmpty(gs.processing.BlockError))
         {
-            yield return processor.Process(gs, ps);
+
+            foreach (IBlockProcessor processor in blockProcessors)
+            {
+                yield return processor.Process(gs, ps);
+            }
+
+
+            Debug.Log("Block: " + gs.processing.BlockId + " Error: " + 
+                gs.processing.BlockError);
+            yield return null;
         }
 
 

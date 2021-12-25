@@ -8,6 +8,6 @@ using System.Threading.Tasks;
 [Serializable]
 public class InnerBlock
 {
-    public long height;
-    public List<string> txs;
+    public long block_no { get; set; }
+    public List<string> txs { get; set; }
 }

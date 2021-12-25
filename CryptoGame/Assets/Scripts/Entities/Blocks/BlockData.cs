@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+[Serializable]
 public class BlockData : IStringId
 {
     public string Id
@@ -12,13 +13,10 @@ public class BlockData : IStringId
         {
             return BlockId.ToString();
         }
-        set
-        {
-
-        }
+        set { }
     }
     public long BlockId { get; set; }
-    public List<Command> Commands { get; set; }
+    public List<Command> Commands {get;set;}
 
     public BlockData()
     {

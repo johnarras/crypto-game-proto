@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 public class BlockIdList
 {
 
-    public const long MinBlock = 44000;
+    public const long MinBlock = 4034000;
 
     public const long V1 = MinBlock;
 }

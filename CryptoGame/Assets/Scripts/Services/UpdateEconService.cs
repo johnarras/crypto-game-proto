@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-public class UpdateEconService : IService
+public class UpdateEconService : IUpdateEconService
 {
     public long GetMinBlockId() { return BlockIdList.V1; }
     

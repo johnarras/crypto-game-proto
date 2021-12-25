@@ -21,21 +21,10 @@ public class SetupService
 
 
     }
-    public void SetupGame(GameState gs, PlayerState ps, string toWallet, long blockId)
+    public void SetupGame(GameState gs, PlayerState ps, string toWallet)
     {
-        if (blockId < BlockIdList.MinBlock)
-        {
-            blockId = BlockIdList.MinBlock;
-        }
-
-        gs.processing = new ProcessingData()
-        {
-            ToWallet = toWallet,
-            BlockId = blockId,
-        };
-
+        SetupRepo(gs, ps, toWallet);
         SetupSettings(gs, ps);
-        SetupRepo(gs, ps);
         SetupObjectFactory(gs, ps);
         RunServiceSetups(gs, ps);
         SetupUnityServices(gs, ps);
@@ -47,9 +36,23 @@ public class SetupService
         gs.settings = new GameSettings();
     }
 
-    protected void SetupRepo(GameState gs, PlayerState ps)
+    protected void SetupRepo(GameState gs, PlayerState ps, string toWallet)
     {
         gs.repo = new Repository();
+
+        long startBlockId = BlockIdList.MinBlock;
+
+        LastBlockCompleted completed = gs.repo.Load<LastBlockCompleted>(toWallet);
+
+        if (completed != null && completed.LastBlockId > startBlockId)
+        {
+            startBlockId = completed.LastBlockId;
+        }
+        gs.processing = new ProcessingData()
+        {
+            ToWallet = toWallet,
+            BlockId = startBlockId,
+        };
     }
 
 

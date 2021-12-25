@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 public class WorldData : IStringId
 {
-    public static string GenerateWorldId(string toWallet, long gameId, long blockId)
+    public static string GenerateWorldId(string toWallet, long blockId)
     {
-        return toWallet + "g" + gameId + "b" + blockId;
+        return toWallet + "g" + blockId;
     }
     public string Id
     {
         get
         {
-            return GenerateWorldId(ToWallet, GameId, BlockId);
+            return GenerateWorldId(ToWallet, BlockId);
         }
 
         set
@@ -23,8 +23,11 @@ public class WorldData : IStringId
         }
     }
     public string ToWallet { get; set; }
-    public long GameId { get; set; }
     public long BlockId { get; set; }
+
+
+    public long NumberVal { get; set; }
+
 
 
     public List<LandData> Lands { get; set; }

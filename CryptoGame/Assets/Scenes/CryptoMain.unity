@@ -292,8 +292,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ToWallet: DBDXnhSjYrheUM9rVsnng9ZCPZUSinjepx
-  GameId: 1
-  StartBlockId: 0
 --- !u!4 &1594981613
 Transform:
   m_ObjectHideFlags: 0

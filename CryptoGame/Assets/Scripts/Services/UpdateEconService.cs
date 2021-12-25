@@ -16,6 +16,6 @@ public class UpdateEconService : IUpdateEconService
 
     public void Process(GameState gs, PlayerState ps)
     {
-
+        ps.world.NumberVal++;
     }
 }

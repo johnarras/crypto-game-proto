@@ -12,7 +12,14 @@ public class UpdateCurrentBlock : IBlockProcessor
 
         if (string.IsNullOrEmpty(gs.processing.BlockError))
         {
-            gs.repo.Save(ps.world, "World" + gs.processing.BlockId);
+            gs.repo.Save(ps.world);
+            LastBlockCompleted completed = new LastBlockCompleted()
+            {
+                Id = gs.processing.ToWallet,
+                LastBlockId = gs.processing.BlockId,
+            };
+            gs.repo.Save(completed);
+            ps.world.BlockId = gs.processing.BlockId;
             gs.processing.BlockId++;
         }
 

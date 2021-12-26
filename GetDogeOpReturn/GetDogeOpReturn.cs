@@ -1,0 +1,306 @@
+using System;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Logging;
+using GetDogeOpReturn.Entities;
+using GetDogeOpReturn.Repos;
+using System.Threading.Tasks;
+using GetDogeOpReturn.Utils;
+using Newtonsoft.Json;
+using GetDogeOpReturn.Entities.Transactions;
+using GetDogeOpReturn.Entities.Blocks;
+using GetDogeOpReturn.Entities.Web;
+using GetDogeOpReturn.Entities.Commands;
+using System.Collections.Generic;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using System.Configuration;
+using GetDogeOpReturn.Entities.Network;
+
+namespace GetDogeOpReturn
+{
+    public static class GetDogeOpReturn
+    {
+
+        public const long MinBlockId = 4030000;
+        public const int MaxBlocks = 30;
+        public const long BlocksToEndBuffer = 3;
+        public const string OP_RETURN = "OP_RETURN";
+        public const long BlockListDiv = 1000; // Should be multiple of 10. 
+        public const string CoinName = "DOGE";
+        public const string blockPrefixURL = "https://chain.so/api/v2/get_block/" + CoinName + "/";
+        public const string transPrefixURL = "https://chain.so/api/v2/get_tx/" + CoinName + "/";
+        public const string networkInfoURL = "https://chain.so/api/v2/get_info/" + CoinName;
+
+        public const string LastSavedFileName = "LastSaved.txt";
+
+        public static string ConnectionString = "";
+
+
+        public static readonly List<string> BadAddresses = new List<string>()
+        {
+            "coinbase",
+            "nonstandard",
+        };
+
+        [FunctionName("GetDogeOpReturn")]
+        public static void Run([TimerTrigger("0 */1 * * * *")] TimerInfo myTimer, ILogger log)
+        {
+            RunAsync().Wait();
+
+
+        }
+
+
+        public async static Task RunAsync()
+        {
+            var dict = Environment.GetEnvironmentVariables();
+            ConnectionString = Environment.GetEnvironmentVariable("StorageAccount");
+            //ConnectionString = ConfigurationManager.AppSettings["StorageAccount"];
+            BlobRepository<BlockData> blockRepo = new BlobRepository<BlockData>(ConnectionString);
+
+            BlobRepository<LastBlockSaved> savedRepo = new BlobRepository<LastBlockSaved>(ConnectionString);
+
+
+            BlobRepository<BlockList> blockListRepo = new BlobRepository<BlockList>(ConnectionString);
+
+
+            WebResult networkResult = await SendWebRequest.SendGetRequest(networkInfoURL);
+
+            if (!string.IsNullOrEmpty(networkResult.Error) || string.IsNullOrEmpty(networkResult.Text))
+            {
+                Console.WriteLine("Failed to download network data");
+                return;
+            }
+
+            FullNetwork fullNetwork = null;
+
+            try
+            {
+             fullNetwork = JsonConvert.DeserializeObject<FullNetwork>(networkResult.Text);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Failed to deserialize network data");
+                return;
+            }
+            if (fullNetwork == null || fullNetwork.data == null || fullNetwork.data.blocks < 1)
+            {
+                Console.Write("Failed to deserialize network data");
+                return;
+            }
+
+            long maxAcceptableBlockId = fullNetwork.data.blocks - BlocksToEndBuffer;
+
+            for (int b = 0; b < MaxBlocks; b++)
+            {
+                LastBlockSaved lastBlock = await savedRepo.Load(LastSavedFileName);
+
+                if (lastBlock == null)
+                {
+                    lastBlock = new LastBlockSaved()
+                    {
+                        Id = LastSavedFileName,
+                        LastBlockId = MinBlockId,
+                    };
+
+                    await savedRepo.Save(lastBlock);
+                }
+
+                if (lastBlock.LastBlockId > maxAcceptableBlockId)
+                {
+                    return;
+                }
+
+                string blockBlobId = BlockData.GetFileNameFromBlockId(lastBlock.LastBlockId);
+
+                BlockData oldBlock = await blockRepo.Load(blockBlobId);
+
+                if (oldBlock != null)
+                {
+                    lastBlock.LastBlockId++;
+                    await savedRepo.Save(lastBlock);
+                    continue;
+                }
+
+                WebResult blockResult = await SendWebRequest.SendGetRequest(blockPrefixURL + lastBlock.LastBlockId);
+
+                if (!string.IsNullOrEmpty(blockResult.Error) ||
+                    string.IsNullOrEmpty(blockResult.Text))
+                {
+                    Console.Write("Missing block data at " + lastBlock.LastBlockId);
+                    return;
+                }
+
+                FullBlock block = null;
+                try
+                {
+                    block = JsonConvert.DeserializeObject<FullBlock>(blockResult.Text);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error deserializing block: " + e.Message);
+                    return;
+                }
+
+
+                if (block == null || block.data == null)
+                {
+                    Console.WriteLine("Missing inner block data");
+                    return;
+                }
+
+                if (block.data.block_no != lastBlock.LastBlockId)
+                {
+                    Console.WriteLine("Block Height read did not match desired BlockId");
+                    return;
+                }
+
+
+                BlockData currentData = new BlockData()
+                {
+                    Id = BlockData.GetFileNameFromBlockId(lastBlock.LastBlockId),
+                    BlockId = lastBlock.LastBlockId,
+                };
+
+                for (int t = 0; t < block.data.txs.Count; t++)
+                {
+                    string txid = block.data.txs[t];
+
+                    WebResult txResult = await SendWebRequest.SendGetRequest(transPrefixURL + txid);
+
+                    if (!string.IsNullOrEmpty(txResult.Error) ||
+                        string.IsNullOrEmpty(txResult.Text))
+                    {
+                        Console.WriteLine("Failed TX download: " + txResult.Error);
+                        return;
+                    }
+
+                    FullTransaction fullTrans = null;
+                    try
+                    {
+                        fullTrans = JsonConvert.DeserializeObject<FullTransaction>(txResult.Text);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Deserialize TX error: " + e.Message);
+                        return;
+                    }
+
+                    if (fullTrans.data.inputs.Count < 1)
+                    {
+                        continue;
+                    }
+
+                    string fromWallet = "";
+                    
+                    for (int ii = 0; ii < fullTrans.data.inputs.Count; ii++)
+                    {
+                        if (!BadAddresses.Contains(fullTrans.data.inputs[ii].address))
+                        {
+                            fromWallet = fullTrans.data.inputs[ii].address;
+                            break;
+                        }
+                    }
+                    
+                    if (fullTrans.data.outputs.Count < 1)
+                    {
+                        continue;
+                    }
+
+
+                    string toWallet = "";
+                    double outputSum = 0;
+
+
+                    for (int oo = 0; oo < fullTrans.data.outputs.Count; oo++)
+                    {
+                        if (!BadAddresses.Contains(fullTrans.data.outputs[oo].address))
+                        {
+                            toWallet = fullTrans.data.outputs[oo].address;
+                            outputSum = fullTrans.data.outputs[oo].value;
+                            break;
+                        }
+                    }
+
+
+                    if (string.IsNullOrEmpty(toWallet) || string.IsNullOrEmpty(fromWallet))
+                    {
+                        continue;
+                    }
+
+
+                    string raw_op_return = "";
+                    foreach (TransactionIO tio in fullTrans.data.outputs)
+                    {
+                        if (!string.IsNullOrEmpty(tio.script) &&
+                            tio.script.IndexOf(OP_RETURN) == 0)
+                        {
+                            raw_op_return = tio.script;
+                            break;
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(raw_op_return))
+                    {
+                        continue;
+                    }
+
+                    string[] words = raw_op_return.Split(' ');
+                    if (words.Length != 2 || words[0] != OP_RETURN)
+                    {
+                        continue;
+                    }
+
+                    string decodedCommand = StrUtils.HexToString(words[1]);
+
+
+                    if (!string.IsNullOrEmpty(decodedCommand))
+                    {
+                        Command comm = new Command()
+                        {
+                            FromWallet = fromWallet,
+                            ToWallet = toWallet,
+                            Quantity = outputSum,
+                            RawCommand = words[1],
+                            DecodedCommand = decodedCommand,
+
+                        };
+
+                        currentData.Commands.Add(comm);
+                    }
+
+                }
+
+                if (currentData.Commands.Count > 0)
+                {
+                    await blockRepo.Save(currentData);
+                    string currentBlockListId = (currentData.BlockId / BlockListDiv).ToString();
+
+                    BlockList currentList = await blockListRepo.Load(currentBlockListId);
+
+                    if (currentList == null)
+                    {
+                        currentList = new BlockList()
+                        {
+                            Id = currentBlockListId,
+                        };
+                    }
+
+
+                    long idToSave = currentData.BlockId % BlockListDiv;
+
+                    if (!currentList.BlockIds.Contains(idToSave))
+                    {
+                        currentList.BlockIds.Add(idToSave);
+                    }
+
+                    await blockListRepo.Save(currentList);
+
+                }
+                lastBlock.LastBlockId++;
+                await savedRepo.Save(lastBlock);
+            }
+
+        }
+    }
+}

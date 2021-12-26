@@ -30,7 +30,7 @@ public class SendWebRequest
             }
 
             Debug.Log("Failed Download Times: " + times);
-            yield return new WaitForSeconds((times + 1) * 10.0f);
+            yield return new WaitForSeconds((times + 1) * 1.0f);
         }
     }
 }

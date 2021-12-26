@@ -9,7 +9,6 @@ public class StrUtils
 {
     public static string HexToString(string hexStr)
     {
-        hexStr = "486920436f696e686f7573652c204974e2809973205061747269636b2c204920686f706520746f206d65657420796f7520736f6f6e2e20";
         StringBuilder sb = new StringBuilder();
 
         List<byte> bytes = new List<byte>();
@@ -18,7 +17,7 @@ public class StrUtils
             bytes.Add((byte)((ConvertOneHexChar(hexStr[i]) << 4) + 
                 ConvertOneHexChar(hexStr[i + 1])));
         }
-        return Encoding.UTF8.GetString(bytes.ToArray());
+        return Encoding.ASCII.GetString(bytes.ToArray());
     }
 
     protected static byte ConvertOneHexChar(char c)
@@ -27,7 +26,7 @@ public class StrUtils
         {
             return (byte)(c - '0');
         }
-        else if (c >= 'a' &&c <='f')
+        else if (c >= 'a' && c <='f')
         {
             return (byte)(10 + c - 'a');
         }

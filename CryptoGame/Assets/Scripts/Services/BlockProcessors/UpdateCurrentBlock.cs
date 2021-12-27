@@ -13,10 +13,10 @@ public class UpdateCurrentBlock : IBlockProcessor
         if (string.IsNullOrEmpty(gs.processing.BlockError))
         {
             gs.repo.Save(ps.world);
-            LastBlockCompleted completed = new LastBlockCompleted()
+            CurrentBlockStatus completed = new CurrentBlockStatus()
             {
                 Id = gs.processing.ToWallet,
-                LastBlockId = gs.processing.BlockId,
+                CurrDownloadBlock = gs.processing.BlockId,
             };
             gs.repo.Save(completed);
             ps.world.BlockId = gs.processing.BlockId;

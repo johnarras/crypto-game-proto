@@ -42,11 +42,11 @@ public class SetupService
 
         long startBlockId = BlockIdList.MinBlock;
 
-        LastBlockCompleted completed = gs.repo.Load<LastBlockCompleted>(toWallet);
+        CurrentBlockStatus completed = gs.repo.Load<CurrentBlockStatus>(toWallet);
 
-        if (completed != null && completed.LastBlockId > startBlockId)
+        if (completed != null && completed.CurrDownloadBlock > startBlockId)
         {
-            startBlockId = completed.LastBlockId;
+            startBlockId = completed.CurrDownloadBlock;
         }
         gs.processing = new ProcessingData()
         {

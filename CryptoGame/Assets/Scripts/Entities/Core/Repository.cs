@@ -9,9 +9,9 @@ using Newtonsoft.Json;
 
 public class Repository
 {
-    protected static string GetPathPrefix()
+    protected static string GetPathPrefix<T>() where T : IStringId
     {
-        string prefix = Application.persistentDataPath + "/Data";
+        string prefix = Application.persistentDataPath + "/Data/" + typeof(T).Name;
         if (!Directory.Exists(prefix))
         {
             Directory.CreateDirectory(prefix);
@@ -20,14 +20,14 @@ public class Repository
         return prefix;
     }
 
-    protected string GetPath(string id)
+    protected string GetPath<T>(string id) where T : IStringId
     {
-        return GetPathPrefix() + "/" + id.Replace("/", "");
+        return GetPathPrefix<T>() + "/" + id.Replace("/", "");
     }
 
     public T Load<T>(string Id) where T : IStringId
     {
-        string path = GetPath(typeof(T).Name + Id);
+        string path = GetPath<T>(Id);
         try
         {
             if (!File.Exists(path))
@@ -46,7 +46,7 @@ public class Repository
 
     public void Save<T> (T t, string id = "") where T : IStringId
     {
-        string path = GetPath(typeof(T).Name + (!string.IsNullOrEmpty(id)?id:t.Id));
+        string path = GetPath<T>(!string.IsNullOrEmpty(id)?id:t.Id);
         string txt = JsonConvert.SerializeObject(t);
         File.WriteAllText(path, txt);
     }

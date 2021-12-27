@@ -10,5 +10,8 @@ public class BlockIdList
 
     public const long MinBlock = 4030000;
 
+
+    public const long BlockIdDiv = 1000; // Should be multiple of 10. Match function.
+
     public const long V1 = MinBlock;
 }

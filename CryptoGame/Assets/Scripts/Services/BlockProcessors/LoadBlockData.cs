@@ -12,14 +12,8 @@ using Newtonsoft.Json;
 public class LoadBlockData : IBlockProcessor
 {
 
-    protected const string blobPrefixURL = "https://dogechain.blob.core.windows.net/";
-
-    protected const string lastBlockSavedContainer = "lastblocksaved";
-    protected const string blockDataContainer = "blockdata";
-    protected const string listDataContainer = "blocklist";
-
-    protected const string listContentsURL = "?restype=container&&comp=list";
-
+    protected string LastBlockSavedFilename = "LastSaved.txt";
+    protected string BlockStatusFilename = "BlockStatus";
 
 
     public static readonly List<string> BadAddresses = new List<string>()
@@ -29,42 +23,111 @@ public class LoadBlockData : IBlockProcessor
         };
     public virtual IEnumerator Process(GameState gs, PlayerState ps)
     {
-        string fullListURL = blobPrefixURL + blockDataContainer + listContentsURL;
-
-        WebResult result = new WebResult();
-
-        yield return SendWebRequest.GetRequest(fullListURL, result);
-
-
-        if (!result.Success)
+        if (gs.processing.DidDownloadBlocks)
         {
-            Debug.Log("Error: " + result.Text);
             yield break;
         }
 
-        string[] words = result.Text.Split("<Name>");
+        gs.processing.DidDownloadBlocks = true;
 
-        List<long> Ids = new List<long>();
+        CurrentBlockStatus blockStatus = gs.repo.Load<CurrentBlockStatus>(BlockStatusFilename);
 
-        for (int i = 0; i < words.Length; i++)
+        if (blockStatus == null)
         {
-            int leftIndex = words[i].IndexOf("<");
-            if (leftIndex <= 1)
+            blockStatus = new CurrentBlockStatus()
             {
-                continue;
-            }
-
-            string numberStr = words[i].Substring(0, leftIndex);
-
-            if (Int64.TryParse(numberStr, out long numberVal))
-            {
-                Ids.Add(numberVal);
-            }
+                Id = BlockStatusFilename,
+                CurrDownloadBlock = BlockIdList.MinBlock,
+                CurrProcessBlock = BlockIdList.MinBlock,
+            };
+            gs.repo.Save(blockStatus);
         }
 
-        foreach (long id in Ids)
+        if (blockStatus.CurrDownloadBlock < BlockIdList.MinBlock)
         {
-            Debug.Log("ID: " + id);
+            blockStatus.CurrDownloadBlock = BlockIdList.MinBlock;
         }
+        if (blockStatus.CurrProcessBlock < BlockIdList.MinBlock)
+        {
+            blockStatus.CurrProcessBlock = BlockIdList.MinBlock;
+        }
+
+        TypedResult<LastBlockSaved> saveResult = new TypedResult<LastBlockSaved>();
+
+        yield return SendWebRequest.LoadFromBlob<LastBlockSaved>(LastBlockSavedFilename, saveResult);
+
+        if (!saveResult.IsOk())
+        {
+            gs.processing.BlockError = "No Last Saved Block";
+        }
+
+        blockStatus.MaxProcessBlock = saveResult.Data.LastBlockId;
+
+        gs.repo.Save(blockStatus);
+
+        long minId = blockStatus.CurrDownloadBlock;
+        long maxId = saveResult.Data.LastBlockId;
+
+        long minBlockListId = minId / BlockIdList.BlockIdDiv;
+        long maxBlockListId = maxId / BlockIdList.BlockIdDiv;
+
+        List<long> blockListsToDownload = new List<long>();
+
+        for (long bid = minBlockListId; bid <= maxBlockListId; bid++)
+        {
+            blockListsToDownload.Add(bid);
+        }
+
+
+        foreach (long blockListId in blockListsToDownload)
+        {
+            TypedResult<BlockList> blockListResult = new TypedResult<BlockList>();
+
+            yield return SendWebRequest.LoadFromBlob<BlockList>(blockListId.ToString(), blockListResult);
+
+            if (!blockListResult.IsOk())
+            {
+                yield break;
+            }
+
+            BlockList blockList = blockListResult.Data;
+
+            if (Int64.TryParse(blockList.Id, out long fullBlockListId))
+            {
+                long startBlockId = fullBlockListId * BlockIdList.BlockIdDiv;
+                long nextStartBlockId = startBlockId + BlockIdList.BlockIdDiv;
+                for (int bidx = 0; bidx < blockListResult.Data.BlockIds.Count; bidx++)
+                {
+                    long blockId = blockListResult.Data.BlockIds[bidx];
+                    long fullBlockId = startBlockId + blockId;
+
+                    if (fullBlockId < blockStatus.CurrDownloadBlock)
+                    {
+                        continue;
+                    }
+                    TypedResult<BlockData> blockResult = new TypedResult<BlockData>();
+
+                    yield return SendWebRequest.LoadFromBlob<BlockData>(fullBlockId.ToString(), blockResult);
+
+                    if (blockResult.IsOk())
+                    {
+                        gs.repo.Save(blockResult.Data);
+                        blockStatus.CurrDownloadBlock = fullBlockId + 1;
+                        if (bidx == blockListResult.Data.BlockIds.Count-1 &&
+                            blockListId < maxBlockListId)
+                        {
+                            blockStatus.CurrDownloadBlock = nextStartBlockId;
+                        }
+                        gs.repo.Save(blockStatus);
+                    }
+                }
+            }
+        }
+        if (blockStatus.CurrDownloadBlock < blockStatus.MaxProcessBlock)
+        {
+            blockStatus.CurrDownloadBlock = blockStatus.MaxProcessBlock;
+            gs.repo.Save(blockStatus);
+        }
+        gs.processing.BlockError = "Finished Loading";
     }
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
 [Serializable]
-public class FullBlock
+public class LastBlockSaved : IStringId
 {
-    public InnerBlock data { get; set; }
+    public string Id { get; set; }
+    public long LastBlockId { get; set; }
 }

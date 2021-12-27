@@ -25,7 +25,7 @@ namespace GetDogeOpReturn
         public const int MaxBlocks = 30;
         public const long BlocksToEndBuffer = 3;
         public const string OP_RETURN = "OP_RETURN";
-        public const long BlockListDiv = 1000; // Should be multiple of 10. 
+        public const long BlockIdDiv = 1000; // Should be multiple of 10. 
         public const string CoinName = "DOGE";
         public const string blockPrefixURL = "https://chain.so/api/v2/get_block/" + CoinName + "/";
         public const string transPrefixURL = "https://chain.so/api/v2/get_tx/" + CoinName + "/";
@@ -64,25 +64,8 @@ namespace GetDogeOpReturn
             BlobRepository<BlockList> blockListRepo = new BlobRepository<BlockList>(ConnectionString);
 
 
-            WebResult networkResult = await SendWebRequest.SendGetRequest(networkInfoURL);
+            FullNetwork fullNetwork = await SendWebRequest.GetObject<FullNetwork>(networkInfoURL);
 
-            if (!string.IsNullOrEmpty(networkResult.Error) || string.IsNullOrEmpty(networkResult.Text))
-            {
-                Console.WriteLine("Failed to download network data");
-                return;
-            }
-
-            FullNetwork fullNetwork = null;
-
-            try
-            {
-             fullNetwork = JsonConvert.DeserializeObject<FullNetwork>(networkResult.Text);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Failed to deserialize network data");
-                return;
-            }
             if (fullNetwork == null || fullNetwork.data == null || fullNetwork.data.blocks < 1)
             {
                 Console.Write("Failed to deserialize network data");
@@ -122,26 +105,7 @@ namespace GetDogeOpReturn
                     continue;
                 }
 
-                WebResult blockResult = await SendWebRequest.SendGetRequest(blockPrefixURL + lastBlock.LastBlockId);
-
-                if (!string.IsNullOrEmpty(blockResult.Error) ||
-                    string.IsNullOrEmpty(blockResult.Text))
-                {
-                    Console.Write("Missing block data at " + lastBlock.LastBlockId);
-                    return;
-                }
-
-                FullBlock block = null;
-                try
-                {
-                    block = JsonConvert.DeserializeObject<FullBlock>(blockResult.Text);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error deserializing block: " + e.Message);
-                    return;
-                }
-
+                FullBlock block = await SendWebRequest.GetObject<FullBlock>(blockPrefixURL + lastBlock.LastBlockId);
 
                 if (block == null || block.data == null)
                 {
@@ -166,27 +130,8 @@ namespace GetDogeOpReturn
                 {
                     string txid = block.data.txs[t];
 
-                    WebResult txResult = await SendWebRequest.SendGetRequest(transPrefixURL + txid);
-
-                    if (!string.IsNullOrEmpty(txResult.Error) ||
-                        string.IsNullOrEmpty(txResult.Text))
-                    {
-                        Console.WriteLine("Failed TX download: " + txResult.Error);
-                        return;
-                    }
-
-                    FullTransaction fullTrans = null;
-                    try
-                    {
-                        fullTrans = JsonConvert.DeserializeObject<FullTransaction>(txResult.Text);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Deserialize TX error: " + e.Message);
-                        return;
-                    }
-
-                    if (fullTrans.data.inputs.Count < 1)
+                    FullTransaction fullTrans = await SendWebRequest.GetObject<FullTransaction>(transPrefixURL + txid);
+                    if (fullTrans == null || fullTrans.data == null || fullTrans.data.inputs.Count < 1)
                     {
                         continue;
                     }
@@ -274,7 +219,7 @@ namespace GetDogeOpReturn
                 if (currentData.Commands.Count > 0)
                 {
                     await blockRepo.Save(currentData);
-                    string currentBlockListId = (currentData.BlockId / BlockListDiv).ToString();
+                    string currentBlockListId = (currentData.BlockId / BlockIdDiv).ToString();
 
                     BlockList currentList = await blockListRepo.Load(currentBlockListId);
 
@@ -287,7 +232,7 @@ namespace GetDogeOpReturn
                     }
 
 
-                    long idToSave = currentData.BlockId % BlockListDiv;
+                    long idToSave = currentData.BlockId % BlockIdDiv;
 
                     if (!currentList.BlockIds.Contains(idToSave))
                     {

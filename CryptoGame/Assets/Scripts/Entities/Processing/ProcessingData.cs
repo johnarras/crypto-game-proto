@@ -9,4 +9,5 @@ public class ProcessingData
     public string ToWallet { get; set; }
     public long BlockId { get; set; }
     public string BlockError { get; set; }
+    public bool DidDownloadBlocks { get; set; }
 }

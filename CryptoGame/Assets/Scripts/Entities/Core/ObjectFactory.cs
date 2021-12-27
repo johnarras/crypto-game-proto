@@ -35,7 +35,7 @@ public class ObjectFactory
         {
             return default(T);
         }
-        return (T)dict[typeof(T)].LastOrDefault(x => x.GetMinBlockId() <= _gs.processing.BlockId);
+        return (T)dict[typeof(T)].LastOrDefault(x => x.GetMinBlockId() <= _gs.world.BlockId);
     }
 
     public List<IService> GetAll()

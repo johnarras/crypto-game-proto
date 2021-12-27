@@ -16,7 +16,7 @@ public class InitClient : BaseBehaviour
         gs.SetInitObject(gameObject);
 
         SetupService setupService = new SetupService();
-        setupService.SetupGame(gs, ps, ToWallet);
+        setupService.SetupGame(gs, ToWallet);
 
         ScreenService screenService = gs.fact.Get<ScreenService>();
         screenService.Open(gs, ScreenList.HUDScreen);
@@ -24,6 +24,6 @@ public class InitClient : BaseBehaviour
 
         IProcessBlockService blockService = gs.fact.Get<IProcessBlockService>();
 
-        StartCoroutine(blockService.Process(gs, ps));
+        StartCoroutine(blockService.Process(gs));
     }
 }

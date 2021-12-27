@@ -12,7 +12,7 @@ public class ReflectionService : IService
 
     private List<Assembly> _assemblies = new List<Assembly>();
     private List<Type> _types = new List<Type>();
-    public void Setup(GameState gs, PlayerState ps)
+    public void Setup(GameState gs)
     {
         _assemblies = new List<Assembly>();
         _assemblies.Add(Assembly.GetAssembly(GetType()));

@@ -13,7 +13,7 @@ public class LoadBlockData : IBlockProcessor
 {
 
     protected string LastBlockSavedFilename = "LastSaved.txt";
-    protected string BlockStatusFilename = "BlockStatus";
+    protected string BlockStatusFilename = "BlockStatus.txt";
 
 
     public static readonly List<string> BadAddresses = new List<string>()
@@ -21,14 +21,14 @@ public class LoadBlockData : IBlockProcessor
             "coinbase",
             "nonstandard",
         };
-    public virtual IEnumerator Process(GameState gs, PlayerState ps)
+    public virtual IEnumerator Process(GameState gs)
     {
-        if (gs.processing.DidDownloadBlocks)
+        if (gs.didDownloadBlocks)
         {
             yield break;
         }
 
-        gs.processing.DidDownloadBlocks = true;
+        gs.didDownloadBlocks = true;
 
         CurrentBlockStatus blockStatus = gs.repo.Load<CurrentBlockStatus>(BlockStatusFilename);
 
@@ -38,7 +38,6 @@ public class LoadBlockData : IBlockProcessor
             {
                 Id = BlockStatusFilename,
                 CurrDownloadBlock = BlockIdList.MinBlock,
-                CurrProcessBlock = BlockIdList.MinBlock,
             };
             gs.repo.Save(blockStatus);
         }
@@ -47,10 +46,6 @@ public class LoadBlockData : IBlockProcessor
         {
             blockStatus.CurrDownloadBlock = BlockIdList.MinBlock;
         }
-        if (blockStatus.CurrProcessBlock < BlockIdList.MinBlock)
-        {
-            blockStatus.CurrProcessBlock = BlockIdList.MinBlock;
-        }
 
         TypedResult<LastBlockSaved> saveResult = new TypedResult<LastBlockSaved>();
 
@@ -58,10 +53,11 @@ public class LoadBlockData : IBlockProcessor
 
         if (!saveResult.IsOk())
         {
-            gs.processing.BlockError = "No Last Saved Block";
+            gs.processError = "No Last Saved Block";
+            yield break;
         }
 
-        blockStatus.MaxProcessBlock = saveResult.Data.LastBlockId;
+        gs.maxProcessBlock = saveResult.Data.LastBlockId;
 
         gs.repo.Save(blockStatus);
 
@@ -87,7 +83,7 @@ public class LoadBlockData : IBlockProcessor
 
             if (!blockListResult.IsOk())
             {
-                yield break;
+                break;
             }
 
             BlockList blockList = blockListResult.Data;
@@ -123,11 +119,10 @@ public class LoadBlockData : IBlockProcessor
                 }
             }
         }
-        if (blockStatus.CurrDownloadBlock < blockStatus.MaxProcessBlock)
+        if (blockStatus.CurrDownloadBlock < gs.maxProcessBlock)
         {
-            blockStatus.CurrDownloadBlock = blockStatus.MaxProcessBlock;
+            blockStatus.CurrDownloadBlock = gs.maxProcessBlock;
             gs.repo.Save(blockStatus);
         }
-        gs.processing.BlockError = "Finished Loading";
     }
 }

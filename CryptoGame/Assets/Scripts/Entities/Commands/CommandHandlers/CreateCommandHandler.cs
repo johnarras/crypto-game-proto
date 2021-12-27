@@ -11,8 +11,12 @@ public class CreateCommandHandler : ICommandHandler
 
     public string GetKey() { return CommandList.Create; }
    
-    public IEnumerator Process (GameState gs, PlayerState ps, Command comm)
+    public IEnumerator Process (GameState gs,  Command comm)
     {
+        IPlayerService playerService = gs.fact.Get<IPlayerService>();
+
+        playerService.AddPlayer(gs, comm.Args);
+
         yield break;
     }
 }

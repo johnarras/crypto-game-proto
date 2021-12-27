@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 public interface IUpdateEconService : IService
 {
-    public void Process(GameState gs, PlayerState ps);
+    public void Process(GameState gs);
 }

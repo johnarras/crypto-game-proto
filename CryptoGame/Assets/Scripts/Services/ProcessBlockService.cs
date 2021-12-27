@@ -13,36 +13,37 @@ public class ProcessBlockService : BaseService, IProcessBlockService
         return BlockIdList.MinBlock;
     }
 
-    public override void Setup(GameState gs, PlayerState ps)
+    public override void Setup(GameState gs)
     {
-        base.Setup(gs, ps);
+        base.Setup(gs);
         // Refine here.
     }
 
 
     protected List<IBlockProcessor> blockProcessors = new List<IBlockProcessor>()
     {
-        new SetupWorldData(),
         new LoadBlockData(),
         new UpdateEcon(),
         new UpdateCurrentBlock(),
     };
 
 
-    public virtual IEnumerator Process(GameState gs, PlayerState ps)
+    public virtual IEnumerator Process(GameState gs)
     {
 
-        while (string.IsNullOrEmpty(gs.processing.BlockError))
+        while (string.IsNullOrEmpty(gs.processError))
         {
 
             foreach (IBlockProcessor processor in blockProcessors)
             {
-                yield return processor.Process(gs, ps);
+                yield return processor.Process(gs);
+                if (!string.IsNullOrEmpty(gs.processError))
+                {
+                    yield break;
+                }
             }
 
-
-            Debug.Log("Block: " + gs.processing.BlockId + " Error: " + 
-                gs.processing.BlockError);
+            Debug.Log("Block: " + gs.world.BlockId + " " + gs.processError);
             yield return null;
         }
 

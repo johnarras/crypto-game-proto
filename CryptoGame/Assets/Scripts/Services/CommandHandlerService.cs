@@ -11,7 +11,7 @@ public class CommandHandlerService : IService
 
 
     private Dictionary<string, List<ICommandHandler>> _handlers = new Dictionary<string, List<ICommandHandler>>();
-    public void Setup(GameState gs, PlayerState ps)
+    public void Setup(GameState gs)
     {
         ReflectionService reflectionService = gs.fact.Get<ReflectionService>();
 
@@ -26,10 +26,10 @@ public class CommandHandlerService : IService
             return null;
         }
 
-        return _handlers[commandId].LastOrDefault(x => x.GetMinBlockId() <= gs.processing.BlockId);
+        return _handlers[commandId].LastOrDefault(x => x.GetMinBlockId() <= gs.world.BlockId);
     }
 
-    public IEnumerator ProcessCommands (GameState gs, PlayerState ps, List<Command> commands)
+    public IEnumerator ProcessCommands (GameState gs, List<Command> commands)
     {
 
         foreach (Command comm in commands)
@@ -37,7 +37,7 @@ public class CommandHandlerService : IService
             ICommandHandler handler = GetHandler(gs, comm.DecodedCommand);
             if (handler != null)
             {
-                yield return handler.Process(gs, ps, comm);
+                yield return handler.Process(gs, comm);
             }
         }
 

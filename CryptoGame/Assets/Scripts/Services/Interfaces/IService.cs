@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 public interface IService : IMinBlockItem
 {
-    void Setup(GameState gs, PlayerState ps);
+    void Setup(GameState gs);
 }

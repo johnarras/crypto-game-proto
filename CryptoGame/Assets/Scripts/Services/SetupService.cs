@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 public class SetupService
 {
-    protected void SetupObjectFactory(GameState gs, PlayerState ps)
+    protected void SetupObjectFactory(GameState gs)
     {
         gs.fact = new ObjectFactory(gs);
 
@@ -15,58 +15,63 @@ public class SetupService
         gs.fact.Set<CommandHandlerService>(new CommandHandlerService());
         gs.fact.Set<IGameDataService>(new GameDataService());
         gs.fact.Set<IUpdateEconService>(new UpdateEconService());
+        gs.fact.Set<IPlayerService>(new PlayerService());
 
 
 
 
 
     }
-    public void SetupGame(GameState gs, PlayerState ps, string toWallet)
+    public void SetupGame(GameState gs, string toWallet)
     {
-        SetupRepo(gs, ps, toWallet);
-        SetupSettings(gs, ps);
-        SetupObjectFactory(gs, ps);
-        RunServiceSetups(gs, ps);
-        SetupUnityServices(gs, ps);
-        SetupGameData(gs, ps);
+        SetupWallet(gs, toWallet);
+        SetupRepo(gs);
+        SetupWorld(gs);
+        SetupSettings(gs);
+        SetupRand(gs);
+        SetupObjectFactory(gs);
+        RunServiceSetups(gs);
+        SetupUnityServices(gs);
+        SetupGameData(gs);
     }
 
-    protected void SetupSettings(GameState gs, PlayerState ps)
+    protected void SetupWallet(GameState gs, string toWallet)
+    {
+        gs.toWallet = toWallet;
+    }
+
+    protected void SetupSettings(GameState gs)
     {
         gs.settings = new GameSettings();
     }
 
-    protected void SetupRepo(GameState gs, PlayerState ps, string toWallet)
+    protected void SetupRepo(GameState gs)
     {
         gs.repo = new Repository();
-
-        long startBlockId = BlockIdList.MinBlock;
-
-        CurrentBlockStatus completed = gs.repo.Load<CurrentBlockStatus>(toWallet);
-
-        if (completed != null && completed.CurrDownloadBlock > startBlockId)
-        {
-            startBlockId = completed.CurrDownloadBlock;
-        }
-        gs.processing = new ProcessingData()
-        {
-            ToWallet = toWallet,
-            BlockId = startBlockId,
-        };
     }
 
+    protected void SetupWorld(GameState gs)
+    {
+        WorldLoader loader = new WorldLoader();
+        loader.LoadWorld(gs);
+    }
 
-    protected void RunServiceSetups(GameState gs, PlayerState ps)
+    protected void SetupRand(GameState gs)
+    {
+        gs.rand = new MyRandom(gs.world.GetSeed());
+    }
+
+    protected void RunServiceSetups(GameState gs)
     { 
         List<IService> allServices = gs.fact.GetAll();
 
         foreach (IService service in allServices)
         {
-            service.Setup(gs, ps);
+            service.Setup(gs);
         }
     }
 
-    protected void SetupGameData(GameState gs, PlayerState ps)
+    protected void SetupGameData(GameState gs)
     {
         IGameDataService gameService = gs.fact.Get<IGameDataService>();
 
@@ -75,12 +80,12 @@ public class SetupService
         gameService.SetupGameData(gs);
     }
 
-    protected void SetupUnityServices(GameState gs, PlayerState ps)
+    protected void SetupUnityServices(GameState gs)
     {
-        AddUnityService<ScreenService>(gs, ps);
+        AddUnityService<ScreenService>(gs);
     }
 
-    protected void AddUnityService<T>(GameState gs, PlayerState ps) where T :ServiceBehaviour
+    protected void AddUnityService<T>(GameState gs) where T :ServiceBehaviour
     {
         T service = GameObjectUtils.GetComponent<T>(gs.GetInitObject());
         if (service != null)

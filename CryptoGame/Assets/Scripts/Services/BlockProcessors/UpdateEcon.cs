@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 public class UpdateEcon : IBlockProcessor
 {
-    public IEnumerator Process(GameState gs, PlayerState ps)
+    public IEnumerator Process(GameState gs)
     {
         IUpdateEconService econService = gs.fact.Get<IUpdateEconService>();
-        econService.Process(gs, ps);
+        econService.Process(gs);
 
         yield break;
     }

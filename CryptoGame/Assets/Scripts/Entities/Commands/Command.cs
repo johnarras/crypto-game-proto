@@ -12,4 +12,7 @@ public class Command
     public double Quantity { get; set; }
     public string RawCommand { get; set; }
     public string DecodedCommand { get; set; }
+    public long BlockId { get; set; }  
+    public string CommandId { get; set; }
+    public string Args { get; set; }
 }

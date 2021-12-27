@@ -8,5 +8,5 @@ public abstract class ServiceBehaviour : BaseBehaviour, IService
 {
     public abstract long GetMinBlockId();
 
-    public abstract void Setup(GameState gs, PlayerState ps);
+    public abstract void Setup(GameState gs);
 }

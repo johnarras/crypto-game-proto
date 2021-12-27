@@ -9,7 +9,7 @@ public class GameDataService : IGameDataService
 {
     public long GetMinBlockId() { return BlockIdList.V1; }
 
-    public void Setup(GameState gs, PlayerState ps)
+    public void Setup(GameState gs)
     {
 
     }

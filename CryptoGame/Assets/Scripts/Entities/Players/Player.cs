@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 public class Player : INameId
 {
+
+    public const long StartId = 1;
+
     public long Id { get; set; }
     public string Name { get; set; }
     public string Address { get; set; }

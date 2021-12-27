@@ -12,7 +12,7 @@ public class ScreenService : ServiceBehaviour
     public override long GetMinBlockId() { return BlockIdList.V1; }
 
 
-    public override void Setup (GameState gs, PlayerState ps)
+    public override void Setup (GameState gs)
     {
 
     }

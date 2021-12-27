@@ -12,5 +12,5 @@ public interface IBlockProcessor
     // we want to use will make a new list of these objects if we need to override them.
 
 
-    IEnumerator Process(GameState gs, PlayerState ps);
+    IEnumerator Process(GameState gs);
 }

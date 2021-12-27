@@ -9,6 +9,4 @@ public class CurrentBlockStatus : IStringId
 {
     public string Id { get; set; }
     public long CurrDownloadBlock { get; set; }
-    public long CurrProcessBlock { get; set; }
-    public long MaxProcessBlock { get; set; }
 }

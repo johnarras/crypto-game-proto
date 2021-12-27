@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class PlayerState
+public interface ILandService : IService
 {
-    public WorldData world;
+    LandData BuyLand(GameState gs, long playerId);
 }

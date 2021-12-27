@@ -38,7 +38,7 @@ public class SendWebRequest
             }
             catch (Exception e)
             {
-                Debug.Log("Failed to deserialize type on web request: " + typeof(T).Name);
+                Debug.Log("Failed to deserialize type on web request: " + e.Message + " " + typeof(T).Name);
             }
         }
     }

@@ -7,22 +7,10 @@ using System.Threading.Tasks;
 
 public class UpdateCurrentBlock : IBlockProcessor
 {
-    public IEnumerator Process(GameState gs, PlayerState ps)
+    public IEnumerator Process(GameState gs)
     {
-
-        if (string.IsNullOrEmpty(gs.processing.BlockError))
-        {
-            gs.repo.Save(ps.world);
-            CurrentBlockStatus completed = new CurrentBlockStatus()
-            {
-                Id = gs.processing.ToWallet,
-                CurrDownloadBlock = gs.processing.BlockId,
-            };
-            gs.repo.Save(completed);
-            ps.world.BlockId = gs.processing.BlockId;
-            gs.processing.BlockId++;
-        }
-
+        gs.world.BlockId++;
+        gs.repo.Save(gs.world);
         yield break;
     }
 }

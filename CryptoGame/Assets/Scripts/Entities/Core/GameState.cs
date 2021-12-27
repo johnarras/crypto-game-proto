@@ -12,10 +12,14 @@ public class GameState
     public Repository repo;
     public GameSettings settings;
     public BlockData block;
-    public ProcessingData processing;
     public ObjectFactory fact;
-    
-    
+    public MyRandom rand;
+    public World world;
+    public string toWallet;
+    public long maxProcessBlock;
+    public string processError;
+    public bool didDownloadBlocks;
+
     private GameObject initObject = null;
     private InitClient initComponent = null;
 

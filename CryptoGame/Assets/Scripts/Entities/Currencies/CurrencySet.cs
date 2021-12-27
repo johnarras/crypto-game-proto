@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class CurrencyStatus : IQuantityId
+public class CurrencySet : QuantityIdList<CurrencyQuantity>
 {
-    public long Id { get; set; }
-    public long Quantity { get; set; }
+
 }

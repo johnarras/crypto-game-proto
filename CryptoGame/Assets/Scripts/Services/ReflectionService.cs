@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 public class ReflectionService : IService
 {
-    virtual public long GetMinBlockId() { return BlockIdList.V1; }
+    virtual public long GetMinBlockId() { return BlockConstants.V1; }
 
 
     private List<Assembly> _assemblies = new List<Assembly>();

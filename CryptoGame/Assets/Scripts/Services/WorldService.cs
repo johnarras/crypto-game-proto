@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 public class WorldService : BaseService, IWorldService
 {
-    public override long GetMinBlockId() { return BlockIdList.MinBlock; }
+    public override long GetMinBlockId() { return BlockConstants.MinBlock; }
 
    
 }

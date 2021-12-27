@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 public class PlayerService : BaseService, IPlayerService
 {
-    public override long GetMinBlockId() { return BlockIdList.MinBlock; }
+    public override long GetMinBlockId() { return BlockConstants.MinBlock; }
 
     public long GetPlayerIdFromWallet(GameState gs, string wallet)
     {

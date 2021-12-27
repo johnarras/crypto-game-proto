@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 public class GameDataService : IGameDataService
 {
-    public long GetMinBlockId() { return BlockIdList.V1; }
+    public long GetMinBlockId() { return BlockConstants.V1; }
 
     public void Setup(GameState gs)
     {
@@ -18,7 +18,11 @@ public class GameDataService : IGameDataService
     {
         gs.data = new GameData();
 
-        ReflectionService reflectionService = gs.fact.Get<ReflectionService>();
-
+        gs.data.Currencies.Add(new CurrencyType() { Id = CurrencyType.Gold, Name = "Gold" });
+        gs.data.Currencies.Add(new CurrencyType() { Id = CurrencyType.Gems, Name = "Gems" });
+        gs.data.Currencies.Add(new CurrencyType() { Id = CurrencyType.Food, Name = "Food" });
+        gs.data.Currencies.Add(new CurrencyType() { Id = CurrencyType.Wood, Name = "Wood" });
+        gs.data.Currencies.Add(new CurrencyType() { Id = CurrencyType.Stone, Name = "Stone" });
+        gs.data.Currencies.Add(new CurrencyType() { Id = CurrencyType.Iron, Name = "Iron" });
     }
 }

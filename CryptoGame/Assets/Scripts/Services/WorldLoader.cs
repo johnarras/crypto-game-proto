@@ -19,7 +19,7 @@ public class WorldLoader
                 gs.world = new World()
                 {
                     Id = worldFilename,
-                    BlockId = BlockIdList.MinBlock,
+                    BlockId = BlockConstants.MinBlock,
                 };
                 gs.repo.Save(gs.world);
             }

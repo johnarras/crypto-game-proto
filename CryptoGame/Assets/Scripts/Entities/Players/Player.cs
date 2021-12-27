@@ -13,14 +13,14 @@ public class Player : INameId
     public string Name { get; set; }
     public string Address { get; set; }
 
-    public BuildingData Buildings { get; set; }
+    public BuildingSet Buildings { get; set; }
 
-    public CurrencyData Currencies { get; set; }
+    public CurrencySet Currencies { get; set; }
 
     public Player()
     {
-        Buildings = new BuildingData();
-        Currencies = new CurrencyData();
+        Buildings = new BuildingSet();
+        Currencies = new CurrencySet();
     }
 
 

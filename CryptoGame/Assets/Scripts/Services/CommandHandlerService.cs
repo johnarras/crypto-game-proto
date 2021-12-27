@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 // Not interfaced since it should not change.
 public class CommandHandlerService : IService
 {
-    public virtual long GetMinBlockId() { return BlockIdList.V1; }
+    public virtual long GetMinBlockId() { return BlockConstants.V1; }
 
 
     private Dictionary<string, List<ICommandHandler>> _handlers = new Dictionary<string, List<ICommandHandler>>();

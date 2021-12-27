@@ -10,7 +10,7 @@ public class ProcessBlockService : BaseService, IProcessBlockService
 {
     public override long GetMinBlockId()
     {
-        return BlockIdList.MinBlock;
+        return BlockConstants.MinBlock;
     }
 
     public override void Setup(GameState gs)

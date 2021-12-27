@@ -8,4 +8,5 @@ public class BuildingStatus : IQuantityId
 {
     public long Id { get; set; }
     public long Quantity { get; set; }
+    public long Level { get; set; }
 }

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class ScreenService : ServiceBehaviour
 {
 
-    public override long GetMinBlockId() { return BlockIdList.V1; }
+    public override long GetMinBlockId() { return BlockConstants.V1; }
 
 
     public override void Setup (GameState gs)

@@ -38,14 +38,14 @@ public class LoadBlockData : IBlockProcessor
             blockStatus = new CurrentBlockStatus()
             {
                 Id = BlockStatusFilename,
-                CurrDownloadBlock = BlockIdList.MinBlock,
+                CurrDownloadBlock = BlockConstants.MinBlock,
             };
             gs.repo.Save(blockStatus);
         }
 
-        if (blockStatus.CurrDownloadBlock < BlockIdList.MinBlock)
+        if (blockStatus.CurrDownloadBlock < BlockConstants.MinBlock)
         {
-            blockStatus.CurrDownloadBlock = BlockIdList.MinBlock;
+            blockStatus.CurrDownloadBlock = BlockConstants.MinBlock;
         }
 
         TypedResult<LastBlockSaved> saveResult = new TypedResult<LastBlockSaved>();
@@ -65,8 +65,8 @@ public class LoadBlockData : IBlockProcessor
         long minId = blockStatus.CurrDownloadBlock;
         long maxId = saveResult.Data.LastBlockId;
 
-        long minBlockListId = minId / BlockIdList.BlockIdDiv;
-        long maxBlockListId = maxId / BlockIdList.BlockIdDiv;
+        long minBlockListId = minId / BlockConstants.BlockIdDiv;
+        long maxBlockListId = maxId / BlockConstants.BlockIdDiv;
 
         List<long> blockListsToDownload = new List<long>();
 
@@ -91,8 +91,8 @@ public class LoadBlockData : IBlockProcessor
 
             if (Int64.TryParse(blockList.Id, out long fullBlockListId))
             {
-                long startBlockId = fullBlockListId * BlockIdList.BlockIdDiv;
-                long nextStartBlockId = startBlockId + BlockIdList.BlockIdDiv;
+                long startBlockId = fullBlockListId * BlockConstants.BlockIdDiv;
+                long nextStartBlockId = startBlockId + BlockConstants.BlockIdDiv;
                 for (int bidx = 0; bidx < blockListResult.Data.BlockIds.Count; bidx++)
                 {
                     long blockId = blockListResult.Data.BlockIds[bidx];

@@ -5,11 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-public class BlockIdList
+public class BlockConstants
 {
 
-    public const long MinBlock = 4030000;
-
+    public const long MinBlock = 4036000;
 
     public const long BlockIdDiv = 1000; // Should be multiple of 10. Match function.
 

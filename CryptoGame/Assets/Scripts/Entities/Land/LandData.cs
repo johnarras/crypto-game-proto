@@ -7,6 +7,5 @@ using System.Threading.Tasks;
 public class LandData : IId
 {
     public long Id { get; set; }
-    public long X { get; set; }
-    public long Y { get; set; }
+    public long Seed { get; set; }
 }

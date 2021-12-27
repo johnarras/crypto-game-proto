@@ -8,7 +8,7 @@ public class LandService : BaseService, ILandService
 {
     public override long GetMinBlockId() { return BlockIdList.MinBlock; }
 
-    public LandData BuyLand(GameState gs, long playerId)
+    public LandData AddLand(GameState gs, long playerId)
     {
         return null;
     }

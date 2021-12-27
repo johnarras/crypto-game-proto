@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 public class Player : INameId
 {
-
+    public const long MissingPlayerId = 0;
     public const long StartId = 1;
 
     public long Id { get; set; }

@@ -17,10 +17,11 @@ public class LoadBlockData : IBlockProcessor
 
 
     public static readonly List<string> BadAddresses = new List<string>()
-        {
-            "coinbase",
-            "nonstandard",
-        };
+    {
+        "coinbase",
+        "nonstandard",
+    };
+
     public virtual IEnumerator Process(GameState gs)
     {
         if (gs.didDownloadBlocks)

@@ -5,13 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class UpdateEcon : IBlockProcessor
+public class ResetRandom : IBlockProcessor
 {
     public IEnumerator Process(GameState gs)
     {
-        IUpdateEconService econService = gs.fact.Get<IUpdateEconService>();
-        econService.Process(gs);
-
+        gs.rand = new MyRandom(gs.world.GetSeed());
         yield break;
     }
 }

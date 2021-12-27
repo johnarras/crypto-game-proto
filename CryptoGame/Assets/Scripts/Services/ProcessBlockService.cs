@@ -23,7 +23,10 @@ public class ProcessBlockService : BaseService, IProcessBlockService
     protected List<IBlockProcessor> blockProcessors = new List<IBlockProcessor>()
     {
         new LoadBlockData(),
-        new UpdateEcon(),
+        new ResetRandom(),
+        new LoadCurrentCommands(),
+        new ProcessCommandsOnTick(),
+        new UpdateEconOnTick(),
         new UpdateCurrentBlock(),
     };
 

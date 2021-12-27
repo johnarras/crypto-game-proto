@@ -15,7 +15,11 @@ public class CreateCommandHandler : ICommandHandler
     {
         IPlayerService playerService = gs.fact.Get<IPlayerService>();
 
-        playerService.AddPlayer(gs, comm.Args);
+        Player player = playerService.AddPlayer(gs, comm.FromWallet, comm.Args);
+
+        ILandService landService = gs.fact.Get<ILandService>();
+
+        landService.AddLand(gs, player.Id);
 
         yield break;
     }

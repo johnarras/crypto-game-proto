@@ -16,6 +16,8 @@ public class SetupService
         gs.fact.Set<IGameDataService>(new GameDataService());
         gs.fact.Set<IUpdateEconService>(new UpdateEconService());
         gs.fact.Set<IPlayerService>(new PlayerService());
+        gs.fact.Set<IWorldService>(new WorldService());
+        gs.fact.Set<ILandService>(new LandService());
 
 
 

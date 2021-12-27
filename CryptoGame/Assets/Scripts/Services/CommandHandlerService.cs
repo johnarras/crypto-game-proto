@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+// Not interfaced since it should not change.
 public class CommandHandlerService : IService
 {
     public virtual long GetMinBlockId() { return BlockIdList.V1; }
@@ -34,7 +36,7 @@ public class CommandHandlerService : IService
 
         foreach (Command comm in commands)
         {
-            ICommandHandler handler = GetHandler(gs, comm.DecodedCommand);
+            ICommandHandler handler = GetHandler(gs, comm.CommandId);
             if (handler != null)
             {
                 yield return handler.Process(gs, comm);

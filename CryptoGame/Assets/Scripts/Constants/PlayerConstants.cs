@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class WorldConstants
+public class PlayerConstants
 {
-    public const long InitialWorldId = 1;
+    public const long MissingPlayerId = 0;
 }

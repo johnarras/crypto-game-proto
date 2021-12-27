@@ -30,10 +30,18 @@ public class World : IStringId
 
     public List<Player> Players { get; set; }
 
+    public List<Command> PendingCommands { get; set; }
+
     public World()
     {
         Lands = new List<LandData>();
         Players = new List<Player>();
+        PendingCommands = new List<Command>();
+    }
+
+    public bool CanProcessTick()
+    {
+        return BlockId % WorldConstants.BlocksPerTick == 0;
     }
 
     public int GetSeed()

@@ -6,5 +6,7 @@ using System.Threading.Tasks;
 
 public interface IPlayerService : IService
 {
-    Player AddPlayer(GameState gs, string name);
+    Player AddPlayer(GameState gs, string walletAddres, string name);
+    long GetPlayerIdFromWallet(GameState gs, string wallet);
+    string GetWalletFromPlayerId(GameState gs, long playerId);
 }

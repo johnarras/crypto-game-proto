@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public interface ILandService : IService
+public class WorldConstants
 {
-    LandData AddLand(GameState gs, long playerId);
+    public const long BlocksPerTick = 10;
 }

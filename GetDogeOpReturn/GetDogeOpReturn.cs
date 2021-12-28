@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using System.Configuration;
 using GetDogeOpReturn.Entities.Network;
+using System.Linq;
 
 namespace GetDogeOpReturn
 {
@@ -125,6 +126,8 @@ namespace GetDogeOpReturn
                     Id = BlockData.GetFileNameFromBlockId(lastBlock.LastBlockId),
                     BlockId = lastBlock.LastBlockId,
                 };
+
+                block.data.txs = block.data.txs.OrderBy(x => x).ToList();
 
                 for (int t = 0; t < block.data.txs.Count; t++)
                 {

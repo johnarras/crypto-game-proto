@@ -9,8 +9,16 @@ public class UpdateCurrentBlock : IBlockProcessor
 {
     public IEnumerator Process(GameState gs)
     {
+        if (!string.IsNullOrEmpty(gs.processMessage))
+        {
+            yield break;
+        }
         gs.world.BlockId++;
         gs.repo.Save(gs.world);
+        if (gs.world.BlockId > gs.maxProcessBlock)
+        {
+            gs.processMessage = "End of Blocks";
+        }
         yield break;
     }
 }

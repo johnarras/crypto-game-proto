@@ -54,7 +54,7 @@ public class LoadBlockData : IBlockProcessor
 
         if (!saveResult.IsOk())
         {
-            gs.processError = "No Last Saved Block";
+            gs.processMessage = "No Last Saved Block";
             yield break;
         }
 

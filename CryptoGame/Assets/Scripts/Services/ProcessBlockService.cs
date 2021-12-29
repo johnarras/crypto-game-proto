@@ -33,22 +33,28 @@ public class ProcessBlockService : BaseService, IProcessBlockService
 
     public virtual IEnumerator Process(GameState gs)
     {
-
-        while (string.IsNullOrEmpty(gs.processError))
+        long startBlock = gs.world.BlockId;
+        while (string.IsNullOrEmpty(gs.processMessage))
         {
 
             foreach (IBlockProcessor processor in blockProcessors)
             {
                 yield return processor.Process(gs);
-                if (!string.IsNullOrEmpty(gs.processError))
+                if (!string.IsNullOrEmpty(gs.processMessage))
                 {
-                    yield break;
+                    break;
                 }
             }
 
-            Debug.Log("Block: " + gs.world.BlockId + " " + gs.processError);
+            if (gs.world.BlockId % 100 == 0)
+            {
+                Debug.Log("Processed block " + gs.world.BlockId);
+            }
             yield return null;
         }
+        long totalBlocks = gs.world.BlockId - startBlock;
+        Debug.Log("EndBlock: " + gs.world.BlockId + " TotalBlocks: " + totalBlocks +
+            " Msg: " + gs.processMessage);
 
 
         yield break;

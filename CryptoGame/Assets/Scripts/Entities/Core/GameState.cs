@@ -17,7 +17,7 @@ public class GameState
     public World world;
     public string toWallet;
     public long maxProcessBlock;
-    public string processError;
+    public string processMessage;
     public bool didDownloadBlocks;
 
     private GameObject initObject = null;

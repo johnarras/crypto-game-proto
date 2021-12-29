@@ -15,6 +15,7 @@ public class CurrencyType : IIndexedGameItem
     public const long Religion = 7;
     public const long Entertainment = 8;
     public const long Science = 9;
+    public const long Exp = 10;
 
     public long Id { get; set; }
     public string Name { get; set; }

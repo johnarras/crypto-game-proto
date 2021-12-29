@@ -39,4 +39,9 @@ public class QuantityIdList<T> where T : class, IQuantityId, new()
     {
         return GetItem(Id).Quantity;
     }
+
+    public List<T> GetData()
+    {
+        return _data;
+    }
 }

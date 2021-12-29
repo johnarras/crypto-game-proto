@@ -119,6 +119,7 @@ public class LoadBlockData : IBlockProcessor
                     }
                 }
             }
+            Debug.Log("Downloaded blocklist " + blockListId);
         }
         if (blockStatus.CurrDownloadBlock < gs.maxProcessBlock)
         {

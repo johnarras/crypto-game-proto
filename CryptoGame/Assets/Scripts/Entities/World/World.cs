@@ -24,7 +24,6 @@ public class World : IStringId
     public string Id { get; set; }
     public string ToWallet { get; set; }
     public long BlockId { get; set; }
-    public long NumberVal { get; set; }
 
     public List<LandData> Lands { get; set; }
 

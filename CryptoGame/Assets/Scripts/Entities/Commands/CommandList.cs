@@ -10,6 +10,6 @@ public class CommandList
     public const string Alloc = "Alloc";
     public const string Explore = "Explore";
     public const string Attack = "Attack";
-    public const string BuyGems = "BuyGems";
+    public const string Buy = "Buy";
     public const string Trade = "Trade";
 }

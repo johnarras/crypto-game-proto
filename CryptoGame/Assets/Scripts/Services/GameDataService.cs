@@ -24,5 +24,10 @@ public class GameDataService : IGameDataService
         gs.data.Currencies.Add(new CurrencyType() { Id = CurrencyType.Wood, Name = "Wood" });
         gs.data.Currencies.Add(new CurrencyType() { Id = CurrencyType.Stone, Name = "Stone" });
         gs.data.Currencies.Add(new CurrencyType() { Id = CurrencyType.Iron, Name = "Iron" });
+        gs.data.Currencies.Add(new CurrencyType() { Id = CurrencyType.Religion, Name = "Religion" });
+        gs.data.Currencies.Add(new CurrencyType() { Id = CurrencyType.Entertainment, Name = "Entertainment" });
+        gs.data.Currencies.Add(new CurrencyType() { Id = CurrencyType.Science, Name = "Science" });
+        gs.data.Currencies.Add(new CurrencyType() { Id = CurrencyType.Exp, Name = "Exp" });
+
     }
 }

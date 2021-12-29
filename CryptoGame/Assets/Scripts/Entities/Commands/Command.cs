@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-[Serializable]
 public class Command
 {
     public string ToWallet { get; set; }

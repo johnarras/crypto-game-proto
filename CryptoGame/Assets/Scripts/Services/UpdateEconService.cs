@@ -16,6 +16,37 @@ public class UpdateEconService : IUpdateEconService
 
     public void Process(GameState gs)
     {
-        gs.world.NumberVal++;
+        UpdatePlayers(gs);
+        UpdateLands(gs);
+    }
+
+    protected void UpdateLands(GameState gs)
+    {
+
+        ILandService landService = gs.fact.Get<ILandService>();
+        foreach (LandData landData in gs.world.Lands)
+        {
+            foreach (CurrencyQuantity prod in landData.Production.GetData())
+            {
+                landData.Storage.Add(prod.Id, prod.Quantity);
+            }
+
+            long foodToGrow = landService.GetFoodToGrowPopulation(landData.Population);
+
+            // Only one growth per turn.
+            if (landData.Storage.Get(CurrencyType.Food) >= foodToGrow)
+            {
+                landData.Population++;
+                landData.Storage.Add(CurrencyType.Food, -foodToGrow);
+            }
+        }
+    }
+
+    protected void UpdatePlayers(GameState gs)
+    {
+        foreach (Player p in gs.world.Players)
+        {
+            p.Currencies.Add(CurrencyType.Exp, 1);
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace GetDogeOpReturn.Utils
             StringBuilder sb = new StringBuilder();
 
             List<byte> bytes = new List<byte>();
-            for (int i = 0; i < hexStr.Length; i += 2)
+            for (int i = 0; i < hexStr.Length-1; i += 2)
             {
                 bytes.Add((byte)((ConvertOneHexChar(hexStr[i]) << 4) +
                     ConvertOneHexChar(hexStr[i + 1])));

@@ -24,6 +24,20 @@ public class ReflectionService : IService
         }
     }
 
+    /// <summary>
+    /// Sets up a dictionary of things for lookup later.
+    /// 
+    /// Make sure they are within 
+    /// 
+    /// namespace ClientHelpers.*
+    /// 
+    /// so that link.xml will pick it up.
+    /// 
+    /// 
+    /// </summary>
+    /// <typeparam name="K"></typeparam>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public Dictionary<K, List<T>> SetupDictionary<K, T>() where T : IDictItem<K>
     {
         Dictionary<K, List<T>> dict = new Dictionary<K, List<T>>();

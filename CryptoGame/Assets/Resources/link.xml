@@ -1,0 +1,9 @@
+<linker>
+	<assembly fullname="System.Core">
+		<type fullname="System.Linq.Expressions.Interpreter.LightLambda" preserve="all" />
+	</assembly>
+	<assembly fullname="Microsoft.CSharp" preserve="all" />
+	<assembly fullname="Assembly.CSharp">
+    <type Fullname= "ClientHelpers*"/>
+	</assembly>
+</linker>

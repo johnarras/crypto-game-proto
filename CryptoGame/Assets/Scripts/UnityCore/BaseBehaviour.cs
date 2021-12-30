@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class BaseBehaviour : MonoBehaviour
 {
-    private GameState _gs;
+    private static GameState _gs;
 
     protected GameState gs {  get { if (_gs == null) _gs = new GameState(); return _gs; } }
 

@@ -15,6 +15,7 @@ public class UpdateCurrentBlock : IBlockProcessor
         }
         gs.world.BlockId++;
         gs.repo.Save(gs.world);
+        gs.dispatcher.DispatchEvent(gs,new ShowOverview());
         if (gs.world.BlockId > gs.maxProcessBlock)
         {
             gs.processMessage = "End of Blocks";

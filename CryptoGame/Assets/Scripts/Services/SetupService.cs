@@ -27,6 +27,7 @@ public class SetupService
     public void SetupGame(GameState gs, string toWallet)
     {
         SetupWallet(gs, toWallet);
+        SetupDispatcher(gs);
         SetupRepo(gs);
         SetupWorld(gs);
         SetupSettings(gs);
@@ -35,6 +36,11 @@ public class SetupService
         RunServiceSetups(gs);
         SetupUnityServices(gs);
         SetupGameData(gs);
+    }
+
+    protected void SetupDispatcher(GameState gs)
+    {
+        gs.dispatcher = new Dispatcher();
     }
 
     protected void SetupWallet(GameState gs, string toWallet)

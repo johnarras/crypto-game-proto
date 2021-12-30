@@ -62,4 +62,33 @@ public class PlayerService : BaseService, IPlayerService
 
         return player;
     }
+
+    string indent = "    ";
+    public string PrintOverview(GameState gs, Player player)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        sb.Append("\nPlayer: " + player.Id + " -- " + player.Name + "\n");
+        foreach (CurrencyQuantity cq in player.Currencies.GetData())
+        {
+            if (cq.Quantity != 0)
+            {
+                CurrencyType ctype = gs.data.Get<CurrencyType>(cq.Id);
+
+                if (ctype == null)
+                {
+                    // Warn?
+                    continue;
+                }
+                sb.Append(indent + ctype.Name + ": " + cq.Quantity + "\n");
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    public Player GetPlayerFromId(GameState gs, long playerId)
+    {
+        return gs.world.Players.FirstOrDefault(x => x.Id == playerId);
+    }
 }

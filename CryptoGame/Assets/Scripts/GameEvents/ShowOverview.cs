@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-public interface IWorldService : IService
+public class ShowOverview
 {
-    string PrintOverview(GameState gs);
 }

@@ -8,5 +8,7 @@ public interface ILandService : IService
 {
     LandData AddLand(GameState gs, long playerId);
 
-    public long GetFoodToGrowPopulation(long currentPopulation);
+    long GetFoodToGrowPopulation(long currentPopulation);
+
+    string PrintOverview(GameState gs, LandData land);
 }

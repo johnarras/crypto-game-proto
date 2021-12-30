@@ -24,12 +24,12 @@ public class LoadBlockData : IBlockProcessor
 
     public virtual IEnumerator Process(GameState gs)
     {
-        if (gs.didDownloadBlocks)
+        if (gs.blocksAreDownloaded)
         {
             yield break;
         }
 
-        gs.didDownloadBlocks = true;
+        gs.blocksAreDownloaded = true;
 
         CurrentBlockStatus blockStatus = gs.repo.Load<CurrentBlockStatus>(BlockStatusFilename);
 

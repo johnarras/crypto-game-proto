@@ -18,8 +18,11 @@ public class InitClient : BaseBehaviour
         SetupService setupService = new SetupService();
         setupService.SetupGame(gs, ToWallet);
 
+        gs.dispatcher.DispatchEvent(gs, new ShowOverview());
+
         ScreenService screenService = gs.fact.Get<ScreenService>();
         screenService.Open(gs, ScreenList.HUDScreen);
+        screenService.Open(gs, ScreenList.OverviewScreen);
 
 
         IProcessBlockService blockService = gs.fact.Get<IProcessBlockService>();

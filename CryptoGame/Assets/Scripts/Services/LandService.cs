@@ -65,4 +65,47 @@ public class LandService : BaseService, ILandService
         return land;
     }
 
+    public string PrintOverview(GameState gs, LandData land)
+    {
+        StringBuilder sb = new StringBuilder();
+
+
+        IPlayerService playerService = gs.fact.Get<IPlayerService>();
+
+
+        Player owner = playerService.GetPlayerFromId(gs, land.OwnerId);
+
+        if (owner == null)
+        {
+            sb.Append("\nLand: [#" + land.Id + "] (Unowned)\n");
+        }
+        else
+        {
+            sb.Append("\nLand: [#" + land.Id + "] Owner: " + owner.Name + "[#" + owner.Id + "]\n");
+        }
+
+        List<long> productionIds = land.Production.GetData().Select(x=>x.Id).Distinct().ToList();
+
+        List<long> storageIds = land.Storage.GetData().Select(x => x.Id).Distinct().ToList();
+
+        List<long> allIds = productionIds.Concat(storageIds).Select(x => x).Distinct().OrderBy(x => x).ToList();
+
+        foreach (long cid in allIds)
+        {
+            CurrencyType ctype = gs.data.Get<CurrencyType>(cid);
+            if (ctype == null)
+            {
+                // Warn?
+                continue;
+            }
+
+            long prodVal = land.Production.Get(cid);
+            long storeVal = land.Storage.Get(cid);
+
+            sb.Append(ctype.Name + "[#" + ctype.Id + "] -- Stored(Prod): " + storeVal + "(" + prodVal + ")\n");
+        }
+
+        return sb.ToString();
+    }
+
 }

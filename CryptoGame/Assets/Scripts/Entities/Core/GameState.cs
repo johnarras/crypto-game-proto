@@ -11,6 +11,7 @@ public class GameState
     public GameData data;
     public Repository repo;
     public GameSettings settings;
+    public Dispatcher dispatcher;
     public BlockData block;
     public ObjectFactory fact;
     public MyRandom rand;
@@ -18,7 +19,7 @@ public class GameState
     public string toWallet;
     public long maxProcessBlock;
     public string processMessage;
-    public bool didDownloadBlocks;
+    public bool blocksAreDownloaded;
 
     private GameObject initObject = null;
     private InitClient initComponent = null;

@@ -50,13 +50,13 @@ public class LandService : BaseService, ILandService
             land.Production.Add(ctype, 1);
 
 
-            if (gs.rand.NextDouble() < 0.5f)
+            if (gs.rand.Next(0,10) < 5)
             {
                 land.Production.Add(ctype, 1);
             }
 
 
-            if (gs.rand.NextDouble() < 0.1f)
+            if (gs.rand.Next(0,10) < 1)
             {
                 land.Production.Add(ctype, 1);
             }

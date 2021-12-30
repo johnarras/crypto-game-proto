@@ -19,10 +19,6 @@ public class MyRandom
         return _rand.Next();
     }
 
-    public double NextDouble()
-    {
-        return _rand.NextDouble();
-    }
 
     public long NextLong()
     {
@@ -71,4 +67,11 @@ public class MyRandom
     {
         return minValue + NextLong(maxValue - minValue);
     }
+
+
+    // Don't use floats/doubles in a lockstep sim.
+    //public double NextDouble()
+    //{
+    //    return _rand.NextDouble();
+    //}
 }

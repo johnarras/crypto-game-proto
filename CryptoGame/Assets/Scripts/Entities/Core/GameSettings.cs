@@ -94,24 +94,6 @@ public class GameSettings
         return val;
     }
 
-    public float FindFloat(String key, float defaultValue = 0.0f)
-    {
-        string str = Find(key);
-
-        if (string.IsNullOrEmpty(str))
-        {
-            return defaultValue;
-        }
-        float val = 0.0f;
-        if (!Single.TryParse(str, out val))
-        {
-            return defaultValue;
-        }
-        return val;
-
-    }
-
-
     public bool FindBool(String key, bool defaultValue = false)
     {
         string str = Find(key);

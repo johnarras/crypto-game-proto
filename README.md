@@ -49,5 +49,6 @@ is deterministic based on some start point, and the person doing the content is 
 back into the blockchain so everything stays deterministic. We could even have PVP since the attacks would be deterministic
 
 
-
-
+Also, there is no server or database. A system is only decentralized as its most centralized part. So, this
+system has no private database or private servers. Anyone telling you they have a "web3" thing but they have a login
+or their own database for doing stuff is blowing smoke.

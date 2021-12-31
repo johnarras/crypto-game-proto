@@ -19,7 +19,7 @@ public class HUDScreen : BaseScreen
     }
 
 
-    protected object OnShowOverview(GameState gs, ShowOverview after)
+    protected ShowOverview OnShowOverview(GameState gs, ShowOverview overview)
     {
 
         UIHelper.SetText(_title, "BlockId " + gs.world.BlockId);

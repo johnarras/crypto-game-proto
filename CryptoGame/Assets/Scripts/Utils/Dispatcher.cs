@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 // Should probably use 2 generic params, but that's more complicated for now.
-public delegate object GameAction<T>(GameState gs, T t);
+public delegate T GameAction<T>(GameState gs, T t);
 
 
 public class Dispatcher
@@ -41,7 +41,7 @@ public class Dispatcher
     {
         if (!_dict.ContainsKey(typeof(T)))
         {
-            return null;
+            return default(T);
         }
 
         object retval = null;
@@ -51,7 +51,7 @@ public class Dispatcher
 
         foreach (GameAction<T> gameAction in list)
         {
-            object tempVal = gameAction(gs, actionParam);
+            T tempVal = gameAction(gs, actionParam);
             if (tempVal != null && retval == null)
             {
                 retval = tempVal;

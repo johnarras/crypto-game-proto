@@ -17,7 +17,7 @@ public class OverviewScreen : BaseScreen
         base.OnStartOpen(data);
     }
 
-    protected object OnShowOverview(GameState gs, ShowOverview after)
+    protected ShowOverview OnShowOverview(GameState gs, ShowOverview after)
     {
         StringBuilder sb = new StringBuilder();
 

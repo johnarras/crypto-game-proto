@@ -37,14 +37,14 @@ public class Dispatcher
         }
     }
 
-    public object DispatchEvent<T>(GameState gs, T actionParam) where T : class
+    public T DispatchEvent<T>(GameState gs, T actionParam) where T : class
     {
         if (!_dict.ContainsKey(typeof(T)))
         {
             return default(T);
         }
 
-        object retval = null;
+        T retval = null;
 
 
         List<GameAction<T>> list = (List<GameAction<T>>)_dict[typeof(T)];

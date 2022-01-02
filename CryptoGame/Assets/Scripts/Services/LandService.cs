@@ -65,6 +65,7 @@ public class LandService : BaseService, ILandService
         return land;
     }
 
+    string indent = "    ";
     public string PrintOverview(GameState gs, LandData land)
     {
         StringBuilder sb = new StringBuilder();
@@ -102,7 +103,7 @@ public class LandService : BaseService, ILandService
             long prodVal = land.Production.Get(cid);
             long storeVal = land.Storage.Get(cid);
 
-            sb.Append(ctype.Name + "[#" + ctype.Id + "] -- Stored(Prod): " + storeVal + "(" + prodVal + ")\n");
+            sb.Append(indent + ctype.Name + "[#" + ctype.Id + "] -- Stored(Prod): " + storeVal + "(" + prodVal + ")\n");
         }
 
         return sb.ToString();

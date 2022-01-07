@@ -6,8 +6,5 @@ using System.Threading.Tasks;
 
 public interface IGameDataSetup : IMinBlockItem
 {
-    public void Setup(GameState gs)
-    {
-
-    }
+    public void Setup(GameState gs);
 }
